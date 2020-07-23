@@ -54,12 +54,11 @@ namespace MotionIOLibrary
         public enum  Modes { MODE_U, MODE_I, MODE_R, MODE_S };
 
         public enum ErrorCode {
-            NO_ERROR            = 0,
-            BAD_COMPORT_OPEN = -100,
-            UNKNOWN_COM_PORT = -101,
-            BAD_COMPORT_READ = -102,
+            NO_ERROR          =    0,
+            BAD_COMPORT_OPEN  = -100,
+            UNKNOWN_COM_PORT  = -101,
+            BAD_COMPORT_READ  = -102,
             BAD_COMPORT_WRITE = -103,
-           
         }
 
         //***********************************************************************
@@ -126,7 +125,7 @@ namespace MotionIOLibrary
         //*********************************************************************** 
         // send_command : Send string command to LLcontrol subsystem
         // ============
-        //
+        
         public ErrorCode send_command(string command) {
 
             ErrorCode status;
@@ -142,7 +141,7 @@ namespace MotionIOLibrary
         }
 
         //*********************************************************************** 
-        // get_reply : Read a status/data reply from LLcontrol subsystem
+        // get_reply : Read a status/data reply string from LLcontrol subsystem
         // =========
 
         public ErrorCode get_reply(string reply) {
@@ -188,7 +187,7 @@ namespace MotionIOLibrary
             string_parameters = string_data.Split(new string[] { " ", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
             param_count = string_parameters.Length;
         //
-        // check each string for integer or real values (default is STRING)
+        // check each string for INTEGER or REAL values (default is STRING)
         //
             for (int i=0; i < param_count; i++) {
                 if (Int32.TryParse(string_parameters[i], out int32_parameters[i])  == true) {
@@ -202,6 +201,16 @@ namespace MotionIOLibrary
                 param_type[i] = Modes.MODE_S;
             }
             return status;
+        }
+
+        public ErrorCode hard_bus_check() {
+
+            return (do_command("Pf 0"));
+        }
+
+        public ErrorCode soft_bus_check() {
+
+            return (do_command("Pu 0"));
         }
     }
 }
