@@ -107,11 +107,11 @@ namespace MotionIOLibrary
 
             ErrorCode status = ErrorCode.NO_ERROR;
 
-            status = send_command(command_string);
+            status = send_command(command);
             if (status != ErrorCode.NO_ERROR) {
                 return  status;
             }
-            status = get_reply(reply_string);
+            status = get_reply(ref reply_string);
             if (status != ErrorCode.NO_ERROR) {
                 return status;
             }
@@ -144,7 +144,7 @@ namespace MotionIOLibrary
         // get_reply : Read a status/data reply string from LLcontrol subsystem
         // =========
 
-        public ErrorCode get_reply(string reply) {
+        public ErrorCode get_reply(ref string reply) {
 
             ErrorCode status = ErrorCode.NO_ERROR;
 
@@ -170,35 +170,35 @@ namespace MotionIOLibrary
         public ErrorCode parse_parameter_string(string string_data) {
 
             ErrorCode status;
+            Int32 index;
 
             status = ErrorCode.NO_ERROR;
             //
             //clear parameter data
             //
-            for (int i= 0; i < MAX_COMMAND_PARAMETERS; i++) {
-                int32_parameters[i]  = 0;
-                float_parameters[i]  = 0.0F;
-                string_parameters[i] = "";
-                param_type[i]        = Modes.MODE_U;
+            for (index = 0; index < MAX_COMMAND_PARAMETERS; index++) {
+                int32_parameters[index]  = 0;
+                float_parameters[index]  = 0.0F;;
+                param_type[index]        = Modes.MODE_U;
             }
         //
         // split string into individual strings based on SPACE separation
-        //*
+        //
             string_parameters = string_data.Split(new string[] { " ", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
             param_count = string_parameters.Length;
         //
         // check each string for INTEGER or REAL values (default is STRING)
         //
-            for (int i=0; i < param_count; i++) {
-                if (Int32.TryParse(string_parameters[i], out int32_parameters[i])  == true) {
-                    param_type[i] = Modes.MODE_I;
+            for (index=0; index < param_count; index++) {
+                if (Int32.TryParse(string_parameters[index], out int32_parameters[index])  == true) {
+                    param_type[index] = Modes.MODE_I;
                     continue;
                 }
-                if (float.TryParse(string_parameters[i], out float_parameters[i])  == true) {
-                    param_type[i] = Modes.MODE_R;
+                if (float.TryParse(string_parameters[index], out float_parameters[index])  == true) {
+                    param_type[index] = Modes.MODE_R;
                     continue;
                 }
-                param_type[i] = Modes.MODE_S;
+                param_type[index] = Modes.MODE_S;
             }
             return status;
         }
@@ -210,7 +210,8 @@ namespace MotionIOLibrary
 
         public ErrorCode soft_bus_check() {
 
-            return (do_command("Pu 0"));
+            string command = "Pu 0";
+            return (do_command(command));
         }
     }
 }
