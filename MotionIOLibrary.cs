@@ -60,7 +60,8 @@ namespace MotionIOLibrary {
             BAD_COMPORT_WRITE      = -103,
             NULL_EMPTY_STRING      = -103,
             FPGA_NOS_UNITS_UNKNOWN = -104,
-            LAST_ERROR             = -104,
+            BAD_COMPORT_CLOSE      = -105,
+            LAST_ERROR             = -105,
         }
 
         //***********************************************************************
@@ -107,6 +108,24 @@ namespace MotionIOLibrary {
                 status = ErrorCode.BAD_COMPORT_OPEN;
             }
             _serialPort.NewLine = "\n";
+            return status;
+        }
+
+        //***********************************************************************
+        // Close_comms : Initialise specified serial COM port
+        // ==========
+
+        public ErrorCode Close_comms()
+        {
+            ErrorCode status;
+
+            status = ErrorCode.NO_ERROR;
+            try {
+                _serialPort.Close();
+            }
+            catch {
+                status = ErrorCode.BAD_COMPORT_CLOSE;
+            }
             return status;
         }
 
@@ -269,7 +288,7 @@ namespace MotionIOLibrary {
         {
             int data;
 
-            return (do_command("Pf 0\n", out data));
+            return (do_command("P3 0\n", out data));
         }
 
         //*********************************************************************** 
@@ -279,7 +298,29 @@ namespace MotionIOLibrary {
         {
             int data;
 
-            string command = "Pu 0\n";
+            string command = "P2 0\n";
+            return (do_command(command, out data));
+        }
+
+        //*********************************************************************** 
+        // ping_uP : Check uP (no comms with FPGA)
+        // =======
+        public ErrorCode ping_uP()
+        {
+            int data;
+
+            string command = "P1 0\n";
+            return (do_command(command, out data));
+        }
+
+        //*********************************************************************** 
+        // restart_FPGA : simple FPGA reset with no bus pre-checks 
+        // ============
+        public ErrorCode restart_FPGA()
+        {
+            int data;
+
+            string command = "P4 0\n";
             return (do_command(command, out data));
         }
 
